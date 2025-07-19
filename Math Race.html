@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Math Race - 2 Players</title>
+  <title>Math Race - Single Player</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -47,6 +47,11 @@
       margin: 20px 0;
     }
 
+    #timer {
+      font-size: 24px;
+      margin: 10px 0;
+    }
+
     #start-btn {
       padding: 15px 30px;
       font-size: 20px;
@@ -54,8 +59,9 @@
   </style>
 </head>
 <body>
-  <h1>⚡ Math Race ⚡</h1>
+  <h1>⚡ Math Race - Single Player ⚡</h1>
 
+  <div id="timer">Time: 30</div>
   <div id="question">Press Start to begin!</div>
   <div id="status"></div>
 
@@ -65,7 +71,7 @@
   </div>
 
   <div id="scoreboard">
-    Player 1: 0 | Player 2: 0
+    Score: 0
   </div>
 
   <button id="start-btn">Start</button>
@@ -74,15 +80,16 @@
     const questionDiv = document.getElementById('question');
     const statusDiv = document.getElementById('status');
     const scoreboard = document.getElementById('scoreboard');
+    const timerDiv = document.getElementById('timer');
     const answerSection = document.getElementById('answer-section');
     const answerInput = document.getElementById('answer-input');
     const submitBtn = document.getElementById('submit-btn');
     const startBtn = document.getElementById('start-btn');
 
-    let player1Score = 0;
-    let player2Score = 0;
+    let score = 0;
     let answer = 0;
-    let currentPlayer = null;
+    let timeLeft = 30;
+    let timer;
 
     function generateQuestion() {
       const ops = ['+', '-', '*'];
@@ -95,47 +102,57 @@
       else answer = num1 * num2;
 
       questionDiv.textContent = `What is ${num1} ${op} ${num2}?`;
-      statusDiv.textContent = 'Buzz in! (A for P1, L for P2)';
-      currentPlayer = null;
+      statusDiv.textContent = 'Enter your answer below:';
     }
 
     function startGame() {
-      generateQuestion();
+      score = 0;
+      timeLeft = 30;
+      scoreboard.textContent = `Score: ${score}`;
+      timerDiv.textContent = `Time: ${timeLeft}`;
       startBtn.disabled = true;
-      answerInput.value = '';
-    }
-
-    function buzzIn(player) {
-      if (currentPlayer) return; // Someone already buzzed in
-      currentPlayer = player;
-      statusDiv.textContent = `Player ${player} buzzed in! Enter your answer:`;
       answerSection.style.display = 'block';
+      answerInput.value = '';
       answerInput.focus();
+      generateQuestion();
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDiv.textContent = `Time: ${timeLeft}`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          endGame();
+        }
+      }, 1000);
     }
 
     function checkAnswer() {
       const playerAnswer = Number(answerInput.value);
 
       if (playerAnswer === answer) {
-        statusDiv.textContent = `Correct! Player ${currentPlayer} gets a point!`;
-        if (currentPlayer === 1) player1Score++;
-        else player2Score++;
+        statusDiv.textContent = `✅ Correct!`;
+        score++;
       } else {
-        statusDiv.textContent = `Wrong! No point awarded.`;
+        statusDiv.textContent = `❌ Wrong! Correct was ${answer}`;
       }
 
-      scoreboard.textContent = `Player 1: ${player1Score} | Player 2: ${player2Score}`;
-      answerSection.style.display = 'none';
+      scoreboard.textContent = `Score: ${score}`;
       answerInput.value = '';
+      answerInput.focus();
       generateQuestion();
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key.toLowerCase() === 'a') buzzIn(1);
-      if (e.key.toLowerCase() === 'l') buzzIn(2);
-    });
+    function endGame() {
+      statusDiv.textContent = `Time's up! You scored ${score} point(s).`;
+      questionDiv.textContent = 'Play again?';
+      answerSection.style.display = 'none';
+      startBtn.disabled = false;
+    }
 
     submitBtn.addEventListener('click', checkAnswer);
+    answerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkAnswer();
+    });
     startBtn.addEventListener('click', startGame);
   </script>
 </body>
