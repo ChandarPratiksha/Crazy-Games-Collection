@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Math Race - 2 Players</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #111;
+      color: #eee;
+    }
+
+    h1 {
+      margin-top: 40px;
+    }
+
+    #question {
+      font-size: 32px;
+      margin: 30px 0;
+    }
+
+    #status {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    #answer-section {
+      margin: 20px 0;
+    }
+
+    #answer-input {
+      padding: 10px;
+      font-size: 18px;
+      width: 100px;
+      text-align: center;
+    }
+
+    #submit-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-left: 10px;
+    }
+
+    #scoreboard {
+      font-size: 24px;
+      margin: 20px 0;
+    }
+
+    #start-btn {
+      padding: 15px 30px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚡ Math Race ⚡</h1>
+
+  <div id="question">Press Start to begin!</div>
+  <div id="status"></div>
+
+  <div id="answer-section" style="display:none;">
+    <input id="answer-input" type="number" placeholder="Your answer" />
+    <button id="submit-btn">Submit</button>
+  </div>
+
+  <div id="scoreboard">
+    Player 1: 0 | Player 2: 0
+  </div>
+
+  <button id="start-btn">Start</button>
+
+  <script>
+    const questionDiv = document.getElementById('question');
+    const statusDiv = document.getElementById('status');
+    const scoreboard = document.getElementById('scoreboard');
+    const answerSection = document.getElementById('answer-section');
+    const answerInput = document.getElementById('answer-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const startBtn = document.getElementById('start-btn');
+
+    let player1Score = 0;
+    let player2Score = 0;
+    let answer = 0;
+    let currentPlayer = null;
+
+    function generateQuestion() {
+      const ops = ['+', '-', '*'];
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      const op = ops[Math.floor(Math.random() * ops.length)];
+
+      if (op === '+') answer = num1 + num2;
+      else if (op === '-') answer = num1 - num2;
+      else answer = num1 * num2;
+
+      questionDiv.textContent = `What is ${num1} ${op} ${num2}?`;
+      statusDiv.textContent = 'Buzz in! (A for P1, L for P2)';
+      currentPlayer = null;
+    }
+
+    function startGame() {
+      generateQuestion();
+      startBtn.disabled = true;
+      answerInput.value = '';
+    }
+
+    function buzzIn(player) {
+      if (currentPlayer) return; // Someone already buzzed in
+      currentPlayer = player;
+      statusDiv.textContent = `Player ${player} buzzed in! Enter your answer:`;
+      answerSection.style.display = 'block';
+      answerInput.focus();
+    }
+
+    function checkAnswer() {
+      const playerAnswer = Number(answerInput.value);
+
+      if (playerAnswer === answer) {
+        statusDiv.textContent = `Correct! Player ${currentPlayer} gets a point!`;
+        if (currentPlayer === 1) player1Score++;
+        else player2Score++;
+      } else {
+        statusDiv.textContent = `Wrong! No point awarded.`;
+      }
+
+      scoreboard.textContent = `Player 1: ${player1Score} | Player 2: ${player2Score}`;
+      answerSection.style.display = 'none';
+      answerInput.value = '';
+      generateQuestion();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'a') buzzIn(1);
+      if (e.key.toLowerCase() === 'l') buzzIn(2);
+    });
+
+    submitBtn.addEventListener('click', checkAnswer);
+    startBtn.addEventListener('click', startGame);
+  </script>
+</body>
+</html>
