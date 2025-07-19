@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rock Paper Scissors - 2 Players</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #222;
+      color: #eee;
+    }
+
+    h1 {
+      margin-top: 40px;
+    }
+
+    .choices {
+      margin: 20px 0;
+    }
+
+    .choices button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+    #status {
+      margin: 20px 0;
+      font-size: 24px;
+    }
+
+    #result {
+      margin: 20px 0;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    #play-again {
+      padding: 10px 20px;
+      font-size: 18px;
+      display: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>✂️ Rock Paper Scissors ✊</h1>
+
+  <div id="status">Player 1: Make your choice!</div>
+
+  <div class="choices" id="choices">
+    <button onclick="makeChoice('Rock')">Rock</button>
+    <button onclick="makeChoice('Paper')">Paper</button>
+    <button onclick="makeChoice('Scissors')">Scissors</button>
+  </div>
+
+  <div id="result"></div>
+
+  <button id="play-again" onclick="resetGame()">Play Again</button>
+
+  <script>
+    let player1Choice = '';
+    let player2Choice = '';
+    let currentPlayer = 1;
+
+    const statusDiv = document.getElementById('status');
+    const resultDiv = document.getElementById('result');
+    const playAgainBtn = document.getElementById('play-again');
+
+    function makeChoice(choice) {
+      if (currentPlayer === 1) {
+        player1Choice = choice;
+        currentPlayer = 2;
+        statusDiv.textContent = 'Player 2: Make your choice!';
+      } else {
+        player2Choice = choice;
+        checkWinner();
+      }
+    }
+
+    function checkWinner() {
+      statusDiv.textContent = `Player 1 chose ${player1Choice}, Player 2 chose ${player2Choice}`;
+
+      if (player1Choice === player2Choice) {
+        resultDiv.textContent = "It's a Tie!";
+      } else if (
+        (player1Choice === 'Rock' && player2Choice === 'Scissors') ||
+        (player1Choice === 'Paper' && player2Choice === 'Rock') ||
+        (player1Choice === 'Scissors' && player2Choice === 'Paper')
+      ) {
+        resultDiv.textContent = "Player 1 Wins!";
+      } else {
+        resultDiv.textContent = "Player 2 Wins!";
+      }
+
+      document.getElementById('choices').style.display = 'none';
+      playAgainBtn.style.display = 'inline-block';
+    }
+
+    function resetGame() {
+      player1Choice = '';
+      player2Choice = '';
+      currentPlayer = 1;
+      statusDiv.textContent = 'Player 1: Make your choice!';
+      resultDiv.textContent = '';
+      document.getElementById('choices').style.display = 'block';
+      playAgainBtn.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
