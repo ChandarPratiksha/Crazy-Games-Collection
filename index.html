@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crazy Games Collection</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+      font-size: 36px;
+    }
+
+    .games {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .game-card {
+      background: #222;
+      border: 2px solid #555;
+      border-radius: 8px;
+      padding: 20px;
+      width: 200px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .game-card:hover {
+      background: #333;
+      transform: scale(1.05);
+    }
+
+    a {
+      text-decoration: none;
+      color: #0f0;
+      font-size: 18px;
+      display: block;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Crazy Games Collection 🎉</h1>
+  <div class="games">
+    <div class="game-card">
+      <h3>Tic-Tac-Toe</h3>
+      <a href="tic-tac-toe.html" target="_blank">Play</a>
+    </div>
+
+    <div class="game-card">
+      <h3>Memory Flip</h3>
+      <a href="Memory Flip.html" target="_blank">Play</a>
+    </div>
+
+    <div class="game-card">
+      <h3>Rock-Paper-Scissors</h3>
+      <a href="Rock-Paper-Scissors.html" target="_blank">Play</a>
+    </div>
+
+    <div class="game-card">
+      <h3>Math Race</h3>
+      <a href="Math Race.html" target="_blank">Play</a>
+    </div>
+
+    <div class="game-card">
+      <h3>Reaction Dual</h3>
+      <a href="reaction-duel.html" target="_blank">Play</a>
+    </div>
+
+    <div class="game-card">
+      <h3>Catch the Falling Fruits</h3>
+      <a href="catch falling fruits.html" target="_blank">Play</a>
+    </div>
+
+    <!-- Add more cards as you build more games -->
+  </div>
+</body>
+</html>
