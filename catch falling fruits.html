@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Catch the Falling Fruits</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      text-align: center;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    #game-area {
+      position: relative;
+      width: 600px;
+      height: 400px;
+      background: #333;
+      margin: 30px auto;
+      overflow: hidden;
+      border: 3px solid #555;
+    }
+
+    #basket {
+      position: absolute;
+      bottom: 10px;
+      left: 260px;
+      width: 80px;
+      height: 20px;
+      background: #0f0;
+    }
+
+    .item {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: orange;
+      border-radius: 50%;
+    }
+
+    #score, #timer {
+      font-size: 20px;
+      margin: 10px;
+    }
+
+    #message {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+
+    #restart-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      display: none;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🥭 Catch the Falling Fruits 🥝</h1>
+  <div id="score">Score: 0</div>
+  <div id="timer">Time: 60s</div>
+  <div id="game-area">
+    <div id="basket"></div>
+  </div>
+  <div id="message"></div>
+  <button id="restart-btn">Play Again</button>
+
+  <script>
+    const gameArea = document.getElementById('game-area');
+    const basket = document.getElementById('basket');
+    const scoreDiv = document.getElementById('score');
+    const timerDiv = document.getElementById('timer');
+    const messageDiv = document.getElementById('message');
+    const restartBtn = document.getElementById('restart-btn');
+
+    let basketX = 260;
+    let score = 0;
+    let gameInterval;
+    let timerInterval;
+    let isGameOver = false;
+    let timeLeft = 60; // 1 minute
+
+    document.addEventListener('keydown', moveBasket);
+    restartBtn.addEventListener('click', restartGame);
+
+    function moveBasket(e) {
+      if (isGameOver) return;
+      if (e.key === 'ArrowLeft' && basketX > 0) {
+        basketX -= 20;
+      } else if (e.key === 'ArrowRight' && basketX < 520) {
+        basketX += 20;
+      }
+      basket.style.left = basketX + 'px';
+    }
+
+    function spawnItem() {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.style.left = Math.floor(Math.random() * 570) + 'px';
+      item.style.top = '0px';
+      gameArea.appendChild(item);
+
+      const fallSpeed = 0.5 + Math.random() * 0.8;
+
+      function fall() {
+        if (isGameOver) {
+          item.remove();
+          return;
+        }
+        let top = parseFloat(item.style.top);
+        top += fallSpeed;
+        item.style.top = top + 'px';
+
+        const itemX = parseFloat(item.style.left);
+        const basketLeft = basketX;
+        const basketRight = basketX + 80;
+        const itemBottom = top + 30;
+
+        if (itemBottom >= 380 && itemX + 30 >= basketLeft && itemX <= basketRight) {
+          score++;
+          scoreDiv.textContent = `Score: ${score}`;
+          item.remove();
+          return;
+        }
+
+        if (top < 400) {
+          requestAnimationFrame(fall);
+        } else {
+          item.remove();
+        }
+      }
+      requestAnimationFrame(fall);
+    }
+
+    function startGame() {
+      basket.style.left = basketX + 'px';
+      gameInterval = setInterval(spawnItem, 1000);
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timerDiv.textContent = `Time: ${timeLeft}s`;
+
+      if (timeLeft <= 0) {
+        endGame();
+      }
+    }
+
+    function endGame() {
+      isGameOver = true;
+      clearInterval(gameInterval);
+      clearInterval(timerInterval);
+      messageDiv.textContent = `Time's up! Final Score: ${score}`;
+      restartBtn.style.display = 'inline-block';
+    }
+
+    function restartGame() {
+      basketX = 260;
+      score = 0;
+      timeLeft = 60;
+      scoreDiv.textContent = `Score: ${score}`;
+      timerDiv.textContent = `Time: ${timeLeft}s`;
+      messageDiv.textContent = '';
+      restartBtn.style.display = 'none';
+      isGameOver = false;
+      startGame();
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
