@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Memory Flip Game</title>
+  <title>Memory Flip - Limited Moves</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -34,33 +34,47 @@
     .matched {
       background: #0a0;
     }
-    #moves, #timer {
+    #moves, #timer, #limit {
       font-size: 18px;
       margin: 10px 0;
+    }
+    #restart-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-top: 15px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <h1>🧩 Memory Flip</h1>
   <div id="moves">Moves: 0</div>
+  <div id="limit">Moves Limit: 20</div>
   <div id="timer">Time: 0s</div>
   <div id="game"></div>
+  <button id="restart-btn">Restart</button>
 
   <script>
     const game = document.getElementById('game');
     const movesDisplay = document.getElementById('moves');
     const timerDisplay = document.getElementById('timer');
+    const limitDisplay = document.getElementById('limit');
+    const restartBtn = document.getElementById('restart-btn');
 
     const symbols = ['🍎','🍌','🍇','🍓','🍒','🥝','🍍','🥥'];
-    let cards = [...symbols, ...symbols];
-    cards.sort(() => 0.5 - Math.random());
-
+    let cards = [];
     let firstCard = null;
     let secondCard = null;
     let moves = 0;
     let matchedPairs = 0;
     let timer = 0;
     let timerInterval;
+    const MOVES_LIMIT = 18;
+
+    function shuffleCards() {
+      cards = [...symbols, ...symbols];
+      cards.sort(() => 0.5 - Math.random());
+    }
 
     function startTimer() {
       timerInterval = setInterval(() => {
@@ -69,13 +83,16 @@
       }, 1000);
     }
 
-    cards.forEach(symbol => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.dataset.symbol = symbol;
-      card.addEventListener('click', flipCard);
-      game.appendChild(card);
-    });
+    function renderBoard() {
+      game.innerHTML = '';
+      cards.forEach(symbol => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.symbol = symbol;
+        card.addEventListener('click', flipCard);
+        game.appendChild(card);
+      });
+    }
 
     function flipCard() {
       if (this.classList.contains('matched') || this.textContent) return;
@@ -112,8 +129,40 @@
             secondCard = null;
           }, 800);
         }
+
+        if (moves >= MOVES_LIMIT && matchedPairs < symbols.length) {
+          clearInterval(timerInterval);
+          setTimeout(() => {
+            alert(`Out of moves! You lost. Try again!`);
+          }, 300);
+          disableBoard();
+        }
       }
     }
+
+    function disableBoard() {
+      const allCards = document.querySelectorAll('.card');
+      allCards.forEach(card => card.removeEventListener('click', flipCard));
+    }
+
+    function resetGame() {
+      clearInterval(timerInterval);
+      moves = 0;
+      matchedPairs = 0;
+      timer = 0;
+      firstCard = null;
+      secondCard = null;
+      movesDisplay.textContent = `Moves: ${moves}`;
+      timerDisplay.textContent = `Time: ${timer}s`;
+      shuffleCards();
+      renderBoard();
+    }
+
+    restartBtn.addEventListener('click', resetGame);
+
+    // Init
+    shuffleCards();
+    renderBoard();
   </script>
 </body>
 </html>
