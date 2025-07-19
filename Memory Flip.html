@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Memory Flip Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #eee;
+      text-align: center;
+    }
+    h1 {
+      margin: 20px 0;
+    }
+    #game {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .card {
+      width: 80px;
+      height: 80px;
+      background: #555;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .matched {
+      background: #0a0;
+    }
+    #moves, #timer {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 Memory Flip</h1>
+  <div id="moves">Moves: 0</div>
+  <div id="timer">Time: 0s</div>
+  <div id="game"></div>
+
+  <script>
+    const game = document.getElementById('game');
+    const movesDisplay = document.getElementById('moves');
+    const timerDisplay = document.getElementById('timer');
+
+    const symbols = ['🍎','🍌','🍇','🍓','🍒','🥝','🍍','🥥'];
+    let cards = [...symbols, ...symbols];
+    cards.sort(() => 0.5 - Math.random());
+
+    let firstCard = null;
+    let secondCard = null;
+    let moves = 0;
+    let matchedPairs = 0;
+    let timer = 0;
+    let timerInterval;
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timer++;
+        timerDisplay.textContent = `Time: ${timer}s`;
+      }, 1000);
+    }
+
+    cards.forEach(symbol => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.symbol = symbol;
+      card.addEventListener('click', flipCard);
+      game.appendChild(card);
+    });
+
+    function flipCard() {
+      if (this.classList.contains('matched') || this.textContent) return;
+
+      if (timer === 0) startTimer();
+
+      this.textContent = this.dataset.symbol;
+
+      if (!firstCard) {
+        firstCard = this;
+      } else if (!secondCard && this !== firstCard) {
+        secondCard = this;
+        moves++;
+        movesDisplay.textContent = `Moves: ${moves}`;
+
+        if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
+          firstCard.classList.add('matched');
+          secondCard.classList.add('matched');
+          matchedPairs++;
+          firstCard = null;
+          secondCard = null;
+
+          if (matchedPairs === symbols.length) {
+            clearInterval(timerInterval);
+            setTimeout(() => {
+              alert(`You won in ${moves} moves and ${timer} seconds!`);
+            }, 300);
+          }
+        } else {
+          setTimeout(() => {
+            firstCard.textContent = '';
+            secondCard.textContent = '';
+            firstCard = null;
+            secondCard = null;
+          }, 800);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
