@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Number Guess Duel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #222;
+      color: #eee;
+    }
+
+    h1 {
+      margin-top: 40px;
+    }
+
+    #message {
+      font-size: 24px;
+      margin: 20px 0;
+    }
+
+    #turn {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    #guess-input {
+      padding: 10px;
+      font-size: 18px;
+      width: 80px;
+      text-align: center;
+    }
+
+    #submit-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔢 Number Guess Duel</h1>
+  <div id="message">Press Start to begin!</div>
+  <div id="turn"></div>
+
+  <input id="guess-input" type="number" min="1" max="20" disabled />
+  <button id="submit-btn" disabled>Submit Guess</button>
+  <br /><br />
+  <button id="start-btn">Start Game</button>
+
+  <script>
+    const message = document.getElementById('message');
+    const turnDisplay = document.getElementById('turn');
+    const guessInput = document.getElementById('guess-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const startBtn = document.getElementById('start-btn');
+
+    let secretNumber = 0;
+    let currentPlayer = 1;
+
+    function startGame() {
+      secretNumber = Math.floor(Math.random() * 20) + 1;
+      currentPlayer = 1;
+      message.textContent = 'I have picked a number between 1 and 20.';
+      turnDisplay.textContent = "Player 1's turn";
+      guessInput.disabled = false;
+      submitBtn.disabled = false;
+      startBtn.disabled = true;
+      guessInput.value = '';
+      guessInput.focus();
+    }
+
+    function submitGuess() {
+      const guess = Number(guessInput.value);
+      if (!guess || guess < 1 || guess > 20) {
+        message.textContent = 'Enter a number between 1 and 20.';
+        return;
+      }
+
+      if (guess === secretNumber) {
+        message.textContent = `Correct! Player ${currentPlayer} wins! 🎉`;
+        turnDisplay.textContent = '';
+        guessInput.disabled = true;
+        submitBtn.disabled = true;
+        startBtn.disabled = false;
+      } else if (guess < secretNumber) {
+        message.textContent = 'Too low!';
+        switchTurn();
+      } else {
+        message.textContent = 'Too high!';
+        switchTurn();
+      }
+
+      guessInput.value = '';
+      guessInput.focus();
+    }
+
+    function switchTurn() {
+      currentPlayer = currentPlayer === 1 ? 2 : 1;
+      turnDisplay.textContent = `Player ${currentPlayer}'s turn`;
+    }
+
+    startBtn.addEventListener('click', startGame);
+    submitBtn.addEventListener('click', submitGuess);
+
+    guessInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitGuess();
+    });
+  </script>
+</body>
+</html>

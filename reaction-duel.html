@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reaction Duel - Two Letters</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #222;
+      color: #eee;
+    }
+
+    h1 {
+      margin-top: 50px;
+    }
+
+    #message {
+      font-size: 32px;
+      margin: 50px 0;
+    }
+
+    #scoreboard {
+      font-size: 24px;
+      margin: 20px 0;
+    }
+
+    #start-btn {
+      padding: 15px 30px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚡ Reaction Duel ⚡</h1>
+  <div id="message">Press Start</div>
+  <div id="scoreboard">
+    Player 1: 0 | Player 2: 0
+  </div>
+  <button id="start-btn">Start Round</button>
+
+  <script>
+    const message = document.getElementById('message');
+    const scoreboard = document.getElementById('scoreboard');
+    const startBtn = document.getElementById('start-btn');
+
+    let p1Score = 0;
+    let p2Score = 0;
+    let ready = false;
+
+    let p1Key = '';
+    let p2Key = '';
+
+    function getRandomKey() {
+      const letters = 'abcdefghijklmnopqrstuvwxyz';
+      return letters[Math.floor(Math.random() * letters.length)];
+    }
+
+    function startRound() {
+      message.textContent = 'Get Ready...';
+      ready = false;
+      startBtn.disabled = true;
+
+      // Pick 2 different random keys
+      do {
+        p1Key = getRandomKey().toUpperCase();
+        p2Key = getRandomKey().toUpperCase();
+      } while (p1Key === p2Key);
+
+      const randomDelay = Math.floor(Math.random() * 3000) + 2000;
+
+      setTimeout(() => {
+        message.innerHTML = `GO!<br>Player 1: [${p1Key}] &nbsp; | &nbsp; Player 2: [${p2Key}]`;
+        ready = true;
+      }, randomDelay);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (!ready) return;
+
+      const pressedKey = e.key.toUpperCase();
+
+      if (pressedKey === p1Key) {
+        message.textContent = `Player 1 Wins! (Pressed ${p1Key})`;
+        p1Score++;
+        ready = false;
+        startBtn.disabled = false;
+      } else if (pressedKey === p2Key) {
+        message.textContent = `Player 2 Wins! (Pressed ${p2Key})`;
+        p2Score++;
+        ready = false;
+        startBtn.disabled = false;
+      } else {
+        // Wrong key, ignore
+      }
+
+      scoreboard.textContent = `Player 1: ${p1Score} | Player 2: ${p2Score}`;
+    });
+
+    startBtn.addEventListener('click', startRound);
+  </script>
+</body>
+</html>
